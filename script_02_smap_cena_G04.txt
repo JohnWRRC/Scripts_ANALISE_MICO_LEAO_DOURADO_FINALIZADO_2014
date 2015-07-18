@@ -1,0 +1,44 @@
+g.region rast=G04.4@PERMANENT
+
+cd "F:\data\john_pc2\mico_leao\mico-leao\selecao_RapidEye_tiff\selecao_RapidEye_tiff\G04"
+
+r.in.gdal in=ortho2012-09-17t140211_re2_1b-nac_11965406_156704_v02.tif out=G04 --o
+
+i.group group=G04 subgroup=G04 input=G04.1,G04.2,G04.3,G04.4,G04.5
+
+# criar grupo e sub grupo e falar quais bandas eu quero.
+
+v.to.rast in=amostras_apa_sao_joao_shp out=amostras_apa_sao_joao_shp --o use=attr column=COD
+
+i.gensigset trainingmap=amostras_apa_sao_joao_shp group=G04 subgroup=G04 signaturefile=G04_sigfile_to_smap
+
+
+
+###RODAR DAQUI PARA BAIXO...
+g.region rast=G04.4@PERMANENT
+i.smap group=G04 subgroup=G04 signaturefile=G04_sigfile_to_smap output=G04_classificacao_smap blocksize=256
+
+cd "D:\data\bds_grass_arcmap_cena_06\output"
+
+r.out.gdal input=06_tif_pol_v01_rast_smap output=06_tif_pol_v01_rast_smap.img format=HFA
+
+
+
+
+
+
+
+i.gensig pol_amostras_trein_c06_shp_rast group=06_tif subgroup=06_tif signaturefile=06_tif_sigfile_maxlik
+
+g.region rast=06_tif.1
+
+i.maxlik group=06_tif subgroup=06_tif sigfile=06_tif_sigfile_maxlik class=06_tif_pol_v01_rast_maxlik
+
+r.out.gdal input=06_tif_pol_v01_rast_maxlik output=06_tif_pol_v01_rast_maxlik.img format=HFA
+
+
+
+
+
+
+
